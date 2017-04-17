@@ -16,8 +16,8 @@ weights = [
     tf.Variable(out_weights)]
 
 biases = [
-    tf.Variable(tf.zeros(3)),
-    tf.Variable(tf.zeros(2))]
+    tf.Variable(tf.zeros(3,1)),
+    tf.Variable(tf.zeros(2,1))]
 
 # Input
 features = tf.Variable([[0.0, 2.0, 3.0, 4.0], [0.1, 0.2, 0.3, 0.4], [11.0, 12.0, 13.0, 14.0]])
