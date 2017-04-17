@@ -63,42 +63,57 @@ accuracy = tf.reduce_mean(tf.cast(correct_prediction,tf.float32))
 init = tf.initialize_all_variables()
 
 saver = tf.train.Saver()
-with tf.Session() as sess:
-    sess.run(init)
-    # Training cycle
-    for epoch in range(training_epochs):
-        avg_cost=0
-        total_batch = int(mnist.train.num_examples/batch_size)
-        # Loop over all batches
-        for i in range(total_batch):
-            batch_x,batch_y = mnist.train.next_batch(batch_size)
-            # Run optimizer
-            _,c = sess.run([optimizer,cost],feed_dict={x:batch_x,y:batch_y})
-            avg_cost += c/total_batch
-        if epoch % display_step == 0:
-            print "Epoch:", '%04d' % (epoch+1), "cost=", \
-                "{:.9f}".format(avg_cost)
-            validation_accuracy = sess.run(
-                    accuracy,
-                    feed_dict={
-                        x: mnist.validation.images,
-                        y: mnist.validation.labels
-                    }
-                    )
-            print('Epoch {:<3} - Validation Accuracy: {}'.format(
-                epoch,
-                validation_accuracy))
-
-    print "Optimization Finished!"
-
-    # Test model
-    correct_test_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
-    # Calculate accuracy
-    test_accuracy = tf.reduce_mean(tf.cast(correct_test_prediction, "float"))
-    print "Accuracy:", test_accuracy.eval({x: mnist.test.images,
-                                            y: mnist.test.labels})
-    saver.save(sess,save_file)
-    print('Trained Model saved')
 
 
+def save_model():
+    with tf.Session() as sess:
+        sess.run(init)
+        # Training cycle
+        for epoch in range(training_epochs):
+            avg_cost = 0
+            total_batch = int(mnist.train.num_examples/batch_size)
+            # Loop over all batches
+            for i in range(total_batch):
+                batch_x,batch_y = mnist.train.next_batch(batch_size)
+                # Run optimizer
+                _,c = sess.run([optimizer,cost],feed_dict={x:batch_x,y:batch_y})
+                avg_cost += c/total_batch
+            if epoch % display_step == 0:
+                print "Epoch:", '%04d' % (epoch+1), "cost=", \
+                    "{:.9f}".format(avg_cost)
+                validation_accuracy = sess.run(
+                        accuracy,
+                        feed_dict={
+                            x: mnist.validation.images,
+                            y: mnist.validation.labels
+                        }
+                        )
+                print('Epoch {:<3} - Validation Accuracy: {}'.format(
+                    epoch,
+                    validation_accuracy))
+
+        print "Optimization Finished!"
+
+        # Test model
+        correct_test_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
+        # Calculate accuracy
+        test_accuracy = tf.reduce_mean(tf.cast(correct_test_prediction, "float"))
+        print "Accuracy:", test_accuracy.eval({x: mnist.test.images,
+                                                y: mnist.test.labels})
+        saver.save(sess, save_file)
+        print('Trained Model saved')
+
+
+def load_model():
+    with tf.Session() as sess:
+        saver.restore(sess, save_file)
+
+        test_accuracy = sess.run(
+            accuracy,
+            feed_dict={x: mnist.test.images, y: mnist.test.labels})
+
+    print('Test Accuracy: {}'.format(test_accuracy))
+
+if __name__=='__main__':
+    save_model()
 

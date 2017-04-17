@@ -62,7 +62,6 @@ epochs = 100
 learn_rate = 0.001
 
 train_batches = batches(batch_size, train_features, train_labels)
-
 with tf.Session() as sess:
     sess.run(init)
 
