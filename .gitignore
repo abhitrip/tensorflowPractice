@@ -89,12 +89,12 @@ ENV/
 .ropeproject
 
 .checkpoint
-.hello_world.py
-.helper.py
-.mnist_data/
-.model.ckpt.data-00000-of-00001
-.model.ckpt.index
-.model.ckpt.meta
-.train_model.ckpt
-.train_model.ckpt.meta
+hello_world.py
+helper.py
+mnist_data/
+model.ckpt.data-00000-of-00001
+model.ckpt.index
+model.ckpt.meta
+train_model.ckpt
+train_model.ckpt.meta
 
