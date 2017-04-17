@@ -3,6 +3,7 @@ mnist = input_data.read_data_sets('mnist_data/', one_hot=True)
 
 import tensorflow as tf
 
+tf.reset_default_graph()
 # Parameters
 learning_rate = 0.001
 training_epochs = 15
@@ -19,6 +20,8 @@ x = tf.placeholder(tf.float32, [None, n_input])
 y = tf.placeholder(tf.float32, [None, n_classes])
 
 # Create Model for multi layer perceptron
+
+
 def multilayer_perceptron(x, weights, biases):
 
     # Hidden layer 1
@@ -41,11 +44,25 @@ biases = {
 logits = multilayer_perceptron(x, weights, biases)
 # Loss
 
-cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=y))
+cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits= \
+    logits, labels=y))
+
+"""
+softmax = tf.nn.softmax(logits)
+cost = tf.reduce_mean(tf.reduce_sum(-y*tf.log(softmax),reduction_indices=[1]))
+"""
+
+save_file = './train_model.ckpt'
+
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
-init = tf.global_variables_initializer()
+correct_prediction = tf.equal(tf.argmax(logits,1),tf.argmax(y,1))
 
+accuracy = tf.reduce_mean(tf.cast(correct_prediction,tf.float32))
+
+init = tf.initialize_all_variables()
+
+saver = tf.train.Saver()
 with tf.Session() as sess:
     sess.run(init)
     # Training cycle
@@ -61,14 +78,27 @@ with tf.Session() as sess:
         if epoch % display_step == 0:
             print "Epoch:", '%04d' % (epoch+1), "cost=", \
                 "{:.9f}".format(avg_cost)
+            validation_accuracy = sess.run(
+                    accuracy,
+                    feed_dict={
+                        x: mnist.validation.images,
+                        y: mnist.validation.labels
+                    }
+                    )
+            print('Epoch {:<3} - Validation Accuracy: {}'.format(
+                epoch,
+                validation_accuracy))
+
     print "Optimization Finished!"
 
     # Test model
-    correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
+    correct_test_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(y, 1))
     # Calculate accuracy
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, "float"))
-    print "Accuracy:", accuracy.eval({x: mnist.test.images, y: mnist.test.labels})
-
+    test_accuracy = tf.reduce_mean(tf.cast(correct_test_prediction, "float"))
+    print "Accuracy:", test_accuracy.eval({x: mnist.test.images,
+                                            y: mnist.test.labels})
+    saver.save(sess,save_file)
+    print('Trained Model saved')
 
 
 
