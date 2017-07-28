@@ -97,4 +97,6 @@ model.ckpt.index
 model.ckpt.meta
 train_model.ckpt
 train_model.ckpt.meta
-
+MNIST_data/
+lenet.py
+test.cc

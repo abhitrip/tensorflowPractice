@@ -21,7 +21,7 @@ biases = [
 
 # Input
 features = tf.Variable([[0.0, 2.0, 3.0, 4.0], [0.1, 0.2, 0.3, 0.4], [11.0, 12.0, 13.0, 14.0]])
-keep_prob = tf.placeholder(tf.float32)
+keep_prob = tf.placeholder(tf.float32ssssssssssssss)
 hidden_layer = tf.add(tf.matmul(features, weights[0]), biases[0])
 hidden_layer = tf.nn.relu(hidden_layer)
 hidden_layer = tf.nn.dropout(hidden_layer, keep_prob)
